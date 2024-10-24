@@ -123,6 +123,12 @@ options: "overdueFilter"
 options: "unplannedFilter"
 ```
 
+### Verbose Paths
+```
+options: "verbosePaths"
+```
+With this option you can choose to show the fully path name of the note within the timeline
+
 With this options you can set a default filter after open the timeline.
 
 ### dailyNoteFolder:
