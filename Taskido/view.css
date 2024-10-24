@@ -414,3 +414,5 @@
 .taskido.unplannedFilter .year:not(.current):not([data-types*="unplanned"]) { display: none; }
 .taskido.unplannedFilter .details:not(.today):not([data-types*="unplanned"]) { display: none; }
 .taskido.unplannedFilter .task:not(.unplanned) { display: none; }
+.taskido.verbosePath .file-path { display: inline !important; }
+.taskido.verbosePath .file-name { display: none; }
