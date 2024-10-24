@@ -593,7 +593,8 @@ function getTimeline(tasks) {
 		};
 		
 		tasksFiltered.forEach(function(item) {
-			var file = getFilePath(item.path)[1];
+			var filePath = getFilePath(item.path);
+			var file = filePath[1];
 			var header = item.header.subpath;
 			var link = item.link.path.replace("'", "&apos;");
 			var text = item.text;
@@ -627,7 +628,7 @@ function getTimeline(tasks) {
 				info += "<div class='priority' aria-label=''><div class='icon'>" + priorityIcon + "</div><div class='label'>" + item.priorityLabel + "</div></div>";
 			};
 			
-			info += "<div class='file' aria-label='" + item.path + "'><div class='icon'>" + fileIcon + "</div><div class='label'>" + file + "<span class='header'> > " + header + "</span></div></div>";
+			info += "<div class='file' aria-label='" + item.path + "'><div class='icon'>" + fileIcon + "</div><div class='label file-path' style='display: none;'>" + filePath[0].replaceAll("\/", " \/ ") + "</div><div class='label file-name'>" + file + "</div>" + (header ? ("<span class='header'>&nbsp;> " + header + "</span>") : "") + "</div>";
 			
 			item.tags.forEach(function(tag) {
 				var tagText = tag.replace("#","");
