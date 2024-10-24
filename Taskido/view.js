@@ -54,7 +54,7 @@ function getMeta(tasks) {
 	for (i=0;i<tasks.length;i++) {
 		let happens = {};
 		var taskText = tasks[i].text;
-		var taskFile = getFilename(tasks[i].path);
+		var taskFilePath = getFilePath(tasks[i].path);
 		var filePath = tasks[i].link.path;
 		
 		// Inbox
@@ -65,7 +65,7 @@ function getMeta(tasks) {
 		};
 		
 		// Daily Notes
-		var dailyNoteMatch = taskFile.match(eval(dailyNoteRegEx));
+		var dailyNoteMatch = taskFilePath[1].match(eval(dailyNoteRegEx)) || taskFilePath[0].replace(dailyNoteFolder, "").match(eval(dailyNoteRegEx));
 		var dailyTaskMatch = taskText.match(/[🛫|⏳|📅|✅] *(\d{4}-\d{2}-\d{2})/);
 		if (dailyNoteMatch && tasks[i].completed == false && tasks[i].checked == false) {
 			tasks[i].dailyNote = true;
@@ -304,7 +304,7 @@ function getSelectOptions() {
 		opt.value = file;
 		var secondParentFolder = file.split("/")[file.split("/").length - 3] == null ? "" : "… / ";
 		var parentFolder = file.split("/")[file.split("/").length - 2] == null ? "" : secondParentFolder + "📂&nbsp;" + file.split("/")[file.split("/").length - 2] + " / ";
-		var filePath = parentFolder + "📄&nbsp;" + getFilename(file);
+		var filePath = parentFolder + "📄&nbsp;" + getFilePath(file)[1];
 		opt.innerHTML =  filePath;
 		opt.title = file;
 		if (select && file == select) {
@@ -489,8 +489,8 @@ function completeTask(link, line, col) {
 	});
 };
 
-function getFilename(path) {
-	var filename = path.match(/^(?:.*\/)?([^\/]+?|)(?=(?:\.[^\/.]*)?$)/)[1];
+function getFilePath(path) {
+	var filename = path.match(/^(?:.*\/)?([^\/]+?|)(?=(?:\.[^\/.]*)?$)/);
 	return filename;
 };
 
@@ -500,30 +500,33 @@ function getMetaFromNote(task, metaName) {
 };
 
 function momentToRegex(momentFormat) {
+	momentFormat = momentFormat.replaceAll("[", "\\");
+	momentFormat = momentFormat.replaceAll("]", "");
+
 	momentFormat = momentFormat.replaceAll(".", "\\.");
 	momentFormat = momentFormat.replaceAll(",", "\\,");
 	momentFormat = momentFormat.replaceAll("-", "\\-");
 	momentFormat = momentFormat.replaceAll(":", "\\:");
 	momentFormat = momentFormat.replaceAll(" ", "\\s");
 	
-	momentFormat = momentFormat.replace("dddd", "\\w{1,}");
-	momentFormat = momentFormat.replace("ddd", "\\w{1,3}");
-	momentFormat = momentFormat.replace("dd", "\\w{2}");
-	momentFormat = momentFormat.replace("d", "\\d{1}");
+	momentFormat = momentFormat.replaceAll("dddd", "\\w{1,}");
+	momentFormat = momentFormat.replaceAll("ddd", "\\w{1,3}");
+	momentFormat = momentFormat.replaceAll("dd", "\\w{2}");
+	momentFormat = momentFormat.replaceAll("d", "\\d{1}");
 	
-	momentFormat = momentFormat.replace("YYYY", "\\d{4}");
-	momentFormat = momentFormat.replace("YY", "\\d{2}");
+	momentFormat = momentFormat.replaceAll("YYYY", "\\d{4}");
+	momentFormat = momentFormat.replaceAll("YY", "\\d{2}");
 	
-	momentFormat = momentFormat.replace("MMMM", "\\w{1,}");
-	momentFormat = momentFormat.replace("MMM", "\\w{3}");
-	momentFormat = momentFormat.replace("MM", "\\d{2}");
+	momentFormat = momentFormat.replaceAll("MMMM", "\\w{1,}");
+	momentFormat = momentFormat.replaceAll("MMM", "\\w{3}");
+	momentFormat = momentFormat.replaceAll("MM", "\\d{2}");
 	
-	momentFormat = momentFormat.replace("DDDD", "\\d{3}");
-	momentFormat = momentFormat.replace("DDD", "\\d{1,3}");
-	momentFormat = momentFormat.replace("DD", "\\d{2}");
-	momentFormat = momentFormat.replace("D", "\\d{1,2}");
+	momentFormat = momentFormat.replaceAll("DDDD", "\\d{3}");
+	momentFormat = momentFormat.replaceAll("DDD", "\\d{1,3}");
+	momentFormat = momentFormat.replaceAll("DD", "\\d{2}");
+	momentFormat = momentFormat.replaceAll("D", "\\d{1,2}");
 	
-	momentFormat = momentFormat.replace("ww", "\\d{1,2}");
+	momentFormat = momentFormat.replaceAll("ww", "\\d{1,2}");
 	
 	regEx = "/^(" + momentFormat + ")$/";
 
@@ -590,7 +593,7 @@ function getTimeline(tasks) {
 		};
 		
 		tasksFiltered.forEach(function(item) {
-			var file = getFilename(item.path);
+			var file = getFilePath(item.path)[1];
 			var header = item.header.subpath;
 			var link = item.link.path.replace("'", "&apos;");
 			var text = item.text;
